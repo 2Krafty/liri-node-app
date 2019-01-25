@@ -1,7 +1,11 @@
 require("dotenv").config();
+
 var keys = require('./keys');
+
 var request = require('request');
+
 var Spotify = require('node-spotify-api');
+
 var moment = require('moment');
 
 var spotify = new Spotify(keys.spotify);
@@ -11,20 +15,17 @@ var casePicker = process.argv[2]
 var nodeArgs = process.argv;
 
 
-var search = "Mr Nobody";
-var songSearch = "Defintion";
-var artist = "The Roots";
 
-for (var i = 3; i < nodeArgs.length; i++) {
+for (var i = 3; i < nodeArgs.length; i++) { 
 
   if (3 === i) {
     search = " ";
     songSearch = " ";
-    artist = "";
+    artist = " ";
   }
-  search = search + " " + nodeArgs[i];
-  songSearch = songSearch + " " + nodeArgs[i];
-  artist = artist + "" + nodeArgs[i];
+  var search = search + " " + nodeArgs[i];
+  var songSearch = songSearch + " " + nodeArgs[i];
+  var artist = artist + "" + nodeArgs[i];
 
 }
 switch (casePicker) {
@@ -47,18 +48,17 @@ switch (casePicker) {
 
 function bands() {
   request("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp", function (error, response, body) {
-    if (!error && response.statusCode === 200) {
+    if (!error) {
       var parseBody = JSON.parse(body)
 
       for (var i = 0; i < parseBody.length; i++) {
-        // console.log(parseBody)
-        // moment(parseBody[i].datetime)
 
-        console.log('----------------------------------------------------');
+
+        console.log('====================================================');
         console.log("Venue: " + parseBody[i].venue.name);
         console.log("Location: " + parseBody[i].venue.city + ", " + parseBody[i].venue.country);
         console.log("Date: " + moment(parseBody[i].datetime).format("MM-DD-YYYY"));
-        console.log('----------------------------------------------------');
+        console.log('====================================================');
       }
 
     }
@@ -68,13 +68,11 @@ function bands() {
 
 function movies() {
   request("http://www.omdbapi.com/?t=" + search + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
-    if (!error && response.statusCode === 200) {
+    if (!error) {
       var parseBody = JSON.parse(body)
-      // console.log(search);
 
-      // console.log(parseBody);
 
-      console.log('-----------------------------------------------------')
+      console.log('====================================================')
       console.log("Title: " + parseBody.Title);
       console.log("Year: " + parseBody.Year);
       console.log("IMDb Rating: " + parseBody.imdbRating);
@@ -83,7 +81,7 @@ function movies() {
       console.log("Language: " + parseBody.Language);
       console.log("Plot: " + parseBody.Plot);
       console.log("Actors: " + parseBody.Actors);
-      console.log('-----------------------------------------------------');
+      console.log('====================================================');
 
     }
   });
@@ -92,21 +90,22 @@ function movies() {
 function songs(songSearch) {
   spotify.search({
     type: 'track',
+
     query: songSearch
   }, function (err, data) {
     if (err) {
       return console.log('Error occurred: ' + err);
     }
-    //  console.log(data)
+
     var result = data.tracks.items;
 
     result.forEach(res => {
-      console.log('------------------------------------------------------')
+      console.log('====================================================')
       console.log("Song: " + res.name)
       console.log("Artist: " + res.artists[0].name)
       console.log("Album: " + res.album.name)
       console.log("Link: " + res.href)
-      console.log('------------------------------------------------------')
+      console.log('====================================================')
     })
   });
 }
@@ -120,7 +119,7 @@ function random() {
       return console.log(error);
     }
     var dataArr = data.split(",");
-    // console.log(dataArr)
+
     songs(dataArr[1])
   });
 
