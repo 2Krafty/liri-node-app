@@ -10,25 +10,27 @@ var moment = require('moment');
 
 var spotify = new Spotify(keys.spotify);
 
-var casePicker = process.argv[2]
+var switchCase = process.argv[2];
 
 var nodeArgs = process.argv;
 
 
 
-for (var i = 3; i < nodeArgs.length; i++) { 
+for (var i = 3; i < nodeArgs.length; i++) {
 
   if (3 === i) {
     search = " ";
     songSearch = " ";
     artist = " ";
   }
+
   var search = search + " " + nodeArgs[i];
   var songSearch = songSearch + " " + nodeArgs[i];
   var artist = artist + "" + nodeArgs[i];
 
 }
-switch (casePicker) {
+
+switch (switchCase) {
   case "concert-this":
     bands();
     break;
@@ -46,10 +48,12 @@ switch (casePicker) {
     break;
 }
 
+
 function bands() {
   request("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp", function (error, response, body) {
     if (!error) {
       var parseBody = JSON.parse(body)
+
 
       for (var i = 0; i < parseBody.length; i++) {
 
@@ -63,8 +67,9 @@ function bands() {
 
     }
 
-  })
+  });
 }
+
 
 function movies() {
   request("http://www.omdbapi.com/?t=" + search + "&y=&plot=short&apikey=trilogy", function (error, response, body) {
@@ -90,37 +95,40 @@ function movies() {
 function songs(songSearch) {
   spotify.search({
     type: 'track',
-
     query: songSearch
-  }, function (err, data) {
-    if (err) {
-      return console.log('Error occurred: ' + err);
+  }, 
+  function (error, data) {
+    if (error) {
+      return console.log('Error occurred: ' + error);
     }
 
     var result = data.tracks.items;
 
-    result.forEach(res => {
+
+    result.forEach(response => {
       console.log('====================================================')
-      console.log("Song: " + res.name)
-      console.log("Artist: " + res.artists[0].name)
-      console.log("Album: " + res.album.name)
-      console.log("Link: " + res.href)
+      console.log("Song: " + response.name)
+      console.log("Artist: " + response.artists[0].name)
+      console.log("Album: " + response.album.name)
+      console.log("Link: " + response.href)
       console.log('====================================================')
     })
   });
 }
 
+
 function random() {
-  var fs = require("fs");
+
+  var fs = require('fs');
 
   fs.readFile("random.txt", "utf8", function (error, data) {
 
     if (error) {
       return console.log(error);
     }
-    var dataArr = data.split(",");
+    var dataArray = data.split(",");
 
-    songs(dataArr[1])
+    songs(dataArray[1])
   });
 
 }
